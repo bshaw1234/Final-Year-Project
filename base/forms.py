@@ -6,10 +6,10 @@ class adp_form(forms.Form):
     ('1', "Twisted Edwards"),
     ('2', "Short Weirstrass")
     )
-    opt = forms.ChoiceField(choices = opt_choices,widget=forms.Select(attrs={'class': 'form-control'}))
-    a = forms.IntegerField(min_value=2,label='a', widget=forms.Select(attrs={'class': 'form-control'}))
-    d = forms.IntegerField(min_value=1,label='d', widget=forms.Select(attrs={'class': 'form-control'}))
-    p = forms.IntegerField(min_value=3,label='p', widget=forms.Select(attrs={'class': 'form-control'}))
+    opt = forms.ChoiceField(choices = opt_choices)
+    a = forms.IntegerField(min_value=2,label='a')
+    d = forms.IntegerField(min_value=1,label='d')
+    p = forms.IntegerField(min_value=3,label='p')
 
     def clean_d(self):
         a = self.cleaned_data['a']
