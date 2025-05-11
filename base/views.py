@@ -86,7 +86,7 @@ def calc(request, start=0):
                 elif(opt == '5'):
                     (x_res,y_res) = curve.multiplypoint(a,d,new_p,(x1,y1), x2)
                 elif(opt == '6'): 
-                    x_res = curve.bsgs_ecdsa(x1, y1,x2 , y2, new_p,a)
+                    x_res = curve.bsgs_ecdsa(x1, y1,x2 , y2, new_p,a,d)
                     y_res=0
 
 

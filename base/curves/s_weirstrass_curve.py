@@ -294,19 +294,29 @@ def double_and_add(multi, generator, p, a):
           (x_tmp, y_tmp) = (x3, y3)
    return (x3, y3)
 
+def Num_Points(a,b,p):
+    # print(f"Called with a={a}, d={b}, p={p}")
+   
+    array = generatePoints(a,b,p)
+    N= len(array[0])+1
+    
+    return N
+
+
 
 # Baby-Step Giant-Step algorithm for ECDLP
-def bsgs_ecdsa(x1,y1,x2,y2, p,a):
+def bsgs_ecdsa(x1,y1,x2,y2, p,a,b):
     """
     Solve the ECDLP: Find k such that P = kG using Baby-Step Giant-Step.
     """
     # Step 1: Precompute constants
-    N = isqrt(p) + 1  # ceil(sqrt(p))
+    nn= Num_Points(a,b,p)
+    N = isqrt(nn) + 1  # ceil(sqrt(p)) / / num of point
 
     # Step 2: Baby-step phase - Compute multiples of G up to N
     baby_steps = {}
     P = (x1,y1)
-    for j in range(p):
+    for j in range(nn-1):
         # baby_steps[current] = j
         current = double_and_add(j, P, p, a)
         baby_steps[current] = j
