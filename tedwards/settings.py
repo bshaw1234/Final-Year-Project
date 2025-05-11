@@ -109,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # csrf issue
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://twisted-edwards-calculator.herokuapp.com'
+    'https://twisted-edwards-calculator.herokuapp.com', 'https://final-year-project-atmb.onrender.com/'
 ]
 
 
