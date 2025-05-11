@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'twisted-edwards-calculator.herokuapp.com',
-    'localhost', '127.0.0.1'
+    'localhost', '127.0.0.1', '*'
 ]
 
 
