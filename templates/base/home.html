@@ -112,7 +112,7 @@
         \hspace{3mm}mod \hspace{1mm}p$$
       </p>
       <p>
-        Equation of Montgomery Curve over finite field: $$By² = x³ + Ax² + x 
+        Equation of Montgomery Curve over finite field: $$by² = x³ + ax² + x 
         \hspace{3mm}mod \hspace{1mm}p$$
       </p>
       <p class="mb-1 fw-bolder">User Input</p>
@@ -159,8 +159,8 @@
         class="alert alert-warning alert-dismissible fade show"
         role="alert"
       >
-        {% if prime %} a = {{a}}, d = {{d}}, p = {{p}}, continue with these
-        values? {% else %} a = {{a}}, d = {{d}},
+        {% if prime %} a = {{a}}, b = {{d}}, p = {{p}}, continue with these
+        values? {% else %} a = {{a}}, b = {{d}},
         <strong>{{p}} is not a prime,</strong> next prime is {{new_p}}, continue
         with these values? {%endif%}
         <br />
