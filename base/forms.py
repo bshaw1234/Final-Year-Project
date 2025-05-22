@@ -4,7 +4,8 @@ from django.core.exceptions import ValidationError
 class adp_form(forms.Form):
     opt_choices = (
     ('1', "Twisted Edwards"),
-    ('2', "Short Weirstrass")
+    ('2', "Short Weirstrass"),
+    ('3', "Montgomery")
     )
     opt = forms.ChoiceField(choices = opt_choices)
     a = forms.IntegerField(min_value=2,label='a')

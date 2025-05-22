@@ -240,19 +240,65 @@ def multiplypoint(a,d,p,p1, scalar):
   return pt
 
 
-from math import isqrt, ceil
-def modinv(a, m):
-    orgm = m
-    x, lastx, y, lasty = 0, 1, 1, 0
-    while m:
-        a, (quotient, m) = m, divmod(a, m)
-        x, lastx = lastx - quotient * x, x
-        y, lasty = lasty - quotient * y, y
-    # if a != 1:
-    #     print("Inverse Does not exist")
-    #     exit()
-    return lastx % orgm
+import sys
+import time
 
+# Generate up to p points
+
+def generatePointsUpto99999(a, d, p, start=0):
+  #Creating the output file
+  x_array = []
+  y_array = []
+
+  # $$$
+  if start > p:
+    start = 0
+
+  # take at max 1000 points
+  for x in range(start,  p):
+      fx = ((x*x*x)+(a*x)+d)%p   #finding values of y^2 mod p for every integer value of x in range
+      if(isResidue(fx, p) or fx == 0):
+        # 4k+3 form
+        if((p-3)%4 == 0):
+          y = pow(fx, (p+1)/4, p)   #euler's method
+        # 4k+1 form
+        else:
+          y = tonelli_shanks(fx,p)   #Tonneli-Shank's method
+
+        x_array.append(x)
+        y_array.append(y)
+        if fx != 0:
+          x_array.append(x)
+          y_array.append(p-y)
+  return (x_array,y_array)
+
+# ----------------- Count number of valid points on curve -----------------
+
+def Num_Points(a,b,p):
+    print(f"Called with a={a}, b={b}, p={p}")
+
+    array = generatePointsUpto99999(a,b,p)
+    N= len(array[0])+1
+    return N
+
+# ----------------- Extended Euclidean Algorithm for modular inverse -----------------
+
+def extended_gcd(aa, bb):
+   lastremainder, remainder = abs(aa), abs(bb)
+   x, lastx, y, lasty = 0, 1, 1, 0
+   while remainder:
+       lastremainder, (quotient, remainder) = remainder, divmod(lastremainder, remainder)
+       x, lastx = lastx - quotient*x, x
+       y, lasty = lasty - quotient*y, y
+   return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
+# calculate `modular inverse`
+def modinv(a, m):
+   g, x, y = extended_gcd(a, m)
+   if g != 1:
+       raise ValueError
+   return x % m
+
+# double function
 def ecc_double(x1, y1, p, a):
    s = ((3*(x1**2) + a) * modinv(2*y1, p))%p
    x3 = (s**2 - x1 - x1)%p
@@ -272,6 +318,8 @@ def ecc_add(x1, y1, x2, y2, p, a):
    x3 = (s**2 - x1 - x2)%p
    y3 = (s*(x1 - x3) - y1)%p
    return (x3, y3)
+
+# ----------------- Scalar multiplication using Double-and-Add -----------------
 
 def double_and_add(multi, generator, p, a):
    (x3, y3)=(0, 0)
@@ -294,39 +342,45 @@ def double_and_add(multi, generator, p, a):
           (x_tmp, y_tmp) = (x3, y3)
    return (x3, y3)
 
-def Num_Points(a,b,p):
-    # print(f"Called with a={a}, d={b}, p={p}")
-   
-    array = generatePoints(a,b,p)
-    N= len(array[0])+1
-    
-    return N
+def is_on_curve(x, y, a, b, p):
+    return (y**2 % p) == (x**3 + a*x + b) % p
 
-
+from math import isqrt, ceil
+import time
 
 # Baby-Step Giant-Step algorithm for ECDLP
 def bsgs_ecdsa(x1,y1,x2,y2, p,a,b):
     """
     Solve the ECDLP: Find k such that P = kG using Baby-Step Giant-Step.
     """
+    if not is_on_curve(x1, y1, a, b, p):
+        print("P is not on the curve")
+        return None  # P is not on the curve
+    if not is_on_curve(x2, y2, a, b, p):
+        print("Q is not on the curve")
+        return None  # Q is not on the curve
+
+
     # Step 1: Precompute constants
-    nn= Num_Points(a,b,p)
-    N = isqrt(nn) + 1  # ceil(sqrt(p)) / / num of point
+    nn = Num_Points(a, b, p)
+    N = isqrt(nn) + 1
 
     # Step 2: Baby-step phase - Compute multiples of G up to N
     baby_steps = {}
     P = (x1,y1)
-    for j in range(nn-1):
-        # baby_steps[current] = j
+
+    for j in range(nn - 1 ):
         current = double_and_add(j, P, p, a)
-        baby_steps[current] = j
+        if current not in baby_steps:
+          baby_steps[current] = j
+
 
     # Step 3: Giant-step phase - Compute P - i * (N * G)
     inv_G = double_and_add(N, P, p, a)  # Compute -N * G (mod p)
     q= (x2,y2)
     neg_mP = (inv_G[0], -inv_G[1] % p)
     current = q
-    for i in range(N):
+    for i in range(N+1):
         if current in baby_steps:
             j = baby_steps[current]
             return i * N + j  # Solve for k
@@ -334,7 +388,6 @@ def bsgs_ecdsa(x1,y1,x2,y2, p,a,b):
         current = ecc_add(q[0],q[1],ch[0],ch[1],p,a)  # Subtract N * G
 
     return None  # No solution found
-
 
 
 

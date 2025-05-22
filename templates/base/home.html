@@ -108,7 +108,11 @@
         -1}{dx² - 1} \hspace{3mm}mod \hspace{1mm}p$$
       </p>
       <p>
-        Equation of Short Weirstrass Curve over finite field: $$y² = x³ + ax + d
+        Equation of Short Weirstrass Curve over finite field: $$y² = x³ + ax + b
+        \hspace{3mm}mod \hspace{1mm}p$$
+      </p>
+      <p>
+        Equation of Montgomery Curve over finite field: $$By² = x³ + Ax² + x 
         \hspace{3mm}mod \hspace{1mm}p$$
       </p>
       <p class="mb-1 fw-bolder">User Input</p>
@@ -130,7 +134,7 @@
 
         <div class="col-12 col-sm-4 col-md-3 col-xl-2">
           <div class="input-group mb-3">
-            <label class="input-group-text" for="id_d">d:</label>
+            <label class="input-group-text" for="id_d">b:</label>
             {{ adp_form.d }}
           </div>
         </div>
